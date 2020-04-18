@@ -11,7 +11,7 @@ import Foundation
 
 class SongController {
     
-    func createSongWith(newSongName: String, newArtistName: String, playlist: Playlist) {
+    static func createSongWith(newSongName: String, newArtistName: String, playlist: Playlist) {
         let newSong = Song(song: newSongName, artist: newArtistName)
         PlaylistController.sharedInstance.updatePlaylistWith(newSong: newSong, to: playlist )
     }

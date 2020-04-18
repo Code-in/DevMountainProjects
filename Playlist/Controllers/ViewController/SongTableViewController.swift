@@ -8,83 +8,75 @@
 
 import UIKit
 
-class SongTableViewController: UITableViewController {
+private let cellIdentifier = "songCell"
 
+class SongTableViewController: UITableViewController {
+    
+    // MARK: Outlets
+    @IBOutlet weak var songNameTextField: UITextField!
+    @IBOutlet weak var artistNameTextField: UITextField!
+    
+    // MARK: Properties
+    var playlist: Playlist?  {
+        didSet {
+            updateViews()
+        }
+    }
+    
+    func updateViews() {
+        //guard let playlist = self.playlist, self.isViewLoaded else { return }
+        //songNameTextField.text = ""
+        //artistNameTextField.text = ""
+    }
+    
+
+    // MARK: Lifecycle Methods
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
-
+    
+    // MARK: Actions
+    
+    @IBAction func addSongButtonTapped(_ sender: UIBarButtonItem) {
+        guard let playlist = self.playlist, let songName = songNameTextField.text, !songName.isEmpty, let artistName = artistNameTextField.text, !artistName.isEmpty else { return }
+        
+        SongController.createSongWith(newSongName: songName, newArtistName: artistName, playlist: playlist)
+        artistNameTextField.text = ""
+        songNameTextField.text = ""
+        tableView.reloadData()
+    }
+    
     // MARK: - Table view data source
-
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 0
+        guard let playlist = self.playlist else { return 0 }
+        return playlist.songs.count
     }
 
-    /*
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
+        
+        // Setup details in cell
+        guard let playlist = self.playlist else { return UITableViewCell() }  // Or we could have just returned the cell
+        let song = playlist.songs[indexPath.row]
+        cell.textLabel?.text = song.songName
+        cell.detailTextLabel?.text = song.artistName
         return cell
     }
-    */
 
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    /*
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
         if editingStyle == .delete {
             // Delete the row from the data source
+            guard let playlist = self.playlist else { return }
+            let song = playlist.songs[indexPath.row]
+            PlaylistController.sharedInstance.removeSong(songToRemove: song, from: playlist)
             tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
-    */
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }
